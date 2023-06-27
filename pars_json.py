@@ -6,7 +6,7 @@ json_text='{"messages":[{"message":"This is the first message","timestamp":"2021
 obj=json.loads(json_text)
 key0="messages"
 position=1 # если укажем 0, то получим первое сообщение
-key1="message" # если укажем timestamp, то получим дату сообщения
+key1="message" # если укажем timestamp, то получим дату и время сообщения
 
 print(obj[key0][position][key1])
 
