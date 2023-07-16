@@ -1,12 +1,34 @@
 import pytest
 import requests
 from lib.base_case import BaseCase
-#from lib.assertions import Assertions
+from lib.assertions import Assertions
 import random, string
+from datetime import datetime
 
 #python -m pytest -s tests/test_user_reg.py
 
 class TestUserReg(BaseCase):
+    def setup_method(self):
+        base_part="learnqa"
+        domain = "example.com"
+        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+        self.email=f"{base_part}{random_part}@{domain}"
+
+    # python -m pytest -s tests/test_user_reg.py -k "test_create_user_successfully"
+    def test_create_user_successfully(self):
+        data = {
+            'password': '123',
+            'username': 'learnqa',
+            'firstName': 'learnqa',
+            'lastName': 'learnqa',
+            'email': self.email
+        }
+        resp1=requests.post('https://playground.learnqa.ru/api/user/',data=data)
+        #assert resp1.status_code==200, f"Unexpected status code {resp1.status_code}"
+        Assertions.assert_code_status(resp1, 200)
+        #print(resp.content)
+        Assertions.assert_json_has_key(resp1, "id")
+
     def test_creat_user_with_existing_email(self):
         email='vinkotov@example.com'
         data={
@@ -17,7 +39,8 @@ class TestUserReg(BaseCase):
             'email':email
         }
         resp1=requests.post('https://playground.learnqa.ru/api/user/',data=data)
-        assert resp1.status_code==400, f"Unexpected status code {resp1.status_code}"
+        #assert resp1.status_code==400, f"Unexpected status code {resp1.status_code}"
+        Assertions.assert_code_status(resp1, 400)
         assert resp1.content.decode("utf-8") == f"Users with email '{email}' already exists", f"Unexpected response content {resp1.content}"
         #print(resp1.status_code)
         #print(resp1.content)
@@ -34,7 +57,8 @@ class TestUserReg(BaseCase):
         resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
-        assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
+        Assertions.assert_code_status(resp1, 400)
+        #assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
         assert resp1.content.decode("utf-8") == f"Invalid email format", f"Unexpected response content {resp1.content}"
 
     users = [
@@ -58,7 +82,8 @@ class TestUserReg(BaseCase):
         #print(resp1.status_code)
         #print(resp1.content)
         #print(resp1.text)
-        assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
+        Assertions.assert_code_status(resp1, 400)
+        #assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
         assert f"The following required params are missed:" in resp1.content.decode("utf-8"), f"Unexpected response content {resp1.content}"
 
     def test_creat_user_name_1symbol(self):
@@ -76,7 +101,8 @@ class TestUserReg(BaseCase):
         resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
-        assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
+        Assertions.assert_code_status(resp1, 400)
+        #assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
         assert resp1.content.decode("utf-8") == f"The value of 'username' field is too short", f"Unexpected response content {resp1.content}"
 
     def test_creat_user_longname(self):
@@ -92,5 +118,6 @@ class TestUserReg(BaseCase):
         resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
-        assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
+        Assertions.assert_code_status(resp1, 400)
+        #assert resp1.status_code == 400, f"Unexpected status code {resp1.status_code}"
         assert resp1.content.decode("utf-8") == f"The value of 'username' field is too long", f"Unexpected response content {resp1.content}"
