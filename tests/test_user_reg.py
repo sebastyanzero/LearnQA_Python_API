@@ -3,26 +3,15 @@ import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 import random, string
-from datetime import datetime
+#from datetime import datetime
 
 #python -m pytest -s tests/test_user_reg.py
 
 class TestUserReg(BaseCase):
-    def setup_method(self):
-        base_part="learnqa"
-        domain = "example.com"
-        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
-        self.email=f"{base_part}{random_part}@{domain}"
 
     # python -m pytest -s tests/test_user_reg.py -k "test_create_user_successfully"
     def test_create_user_successfully(self):
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        data=self.prepare_reg_data()
         resp1=requests.post('https://playground.learnqa.ru/api/user/',data=data)
         #assert resp1.status_code==200, f"Unexpected status code {resp1.status_code}"
         Assertions.assert_code_status(resp1, 200)
@@ -31,13 +20,7 @@ class TestUserReg(BaseCase):
 
     def test_creat_user_with_existing_email(self):
         email='vinkotov@example.com'
-        data={
-            'password':'123',
-            'username':'learnqa',
-            'firstName':'learnqa',
-            'lastName':'learnqa',
-            'email':email
-        }
+        data = self.prepare_reg_data(email)
         resp1=requests.post('https://playground.learnqa.ru/api/user/',data=data)
         #assert resp1.status_code==400, f"Unexpected status code {resp1.status_code}"
         Assertions.assert_code_status(resp1, 400)
@@ -47,13 +30,7 @@ class TestUserReg(BaseCase):
 
     def test_creat_user_with_uncor_email(self):
         email = 'nameexample.com'
-        data = {
-            'password': '123',
-            'username': 'uname',
-            'firstName': 'fname',
-            'lastName': 'lname',
-            'email': email
-        }
+        data = self.prepare_reg_data(email)
         resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
