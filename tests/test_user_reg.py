@@ -1,7 +1,7 @@
 import pytest
-import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+from lib.my_requests import MyRequests
 import random, string
 #from datetime import datetime
 
@@ -12,7 +12,7 @@ class TestUserReg(BaseCase):
     # python -m pytest -s tests/test_user_reg.py -k "test_create_user_successfully"
     def test_create_user_successfully(self):
         data=self.prepare_reg_data()
-        resp1=requests.post('https://playground.learnqa.ru/api/user/',data=data)
+        resp1=MyRequests.post('api/user/',data=data)
         #assert resp1.status_code==200, f"Unexpected status code {resp1.status_code}"
         Assertions.assert_code_status(resp1, 200)
         #print(resp.content)
@@ -21,7 +21,7 @@ class TestUserReg(BaseCase):
     def test_creat_user_with_existing_email(self):
         email='vinkotov@example.com'
         data = self.prepare_reg_data(email)
-        resp1=requests.post('https://playground.learnqa.ru/api/user/',data=data)
+        resp1=MyRequests.post('api/user/',data=data)
         #assert resp1.status_code==400, f"Unexpected status code {resp1.status_code}"
         Assertions.assert_code_status(resp1, 400)
         assert resp1.content.decode("utf-8") == f"Users with email '{email}' already exists", f"Unexpected response content {resp1.content}"
@@ -31,7 +31,7 @@ class TestUserReg(BaseCase):
     def test_creat_user_with_uncor_email(self):
         email = 'nameexample.com'
         data = self.prepare_reg_data(email)
-        resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        resp1 = MyRequests.post('api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
         Assertions.assert_code_status(resp1, 400)
@@ -55,7 +55,7 @@ class TestUserReg(BaseCase):
             'lastName': userdate[3],
             'email': userdate[4]
         }
-        resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        resp1 = MyRequests.post('api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
         #print(resp1.text)
@@ -75,7 +75,7 @@ class TestUserReg(BaseCase):
             'lastName': 'lname',
             'email': 'name@example.com'
         }
-        resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        resp1 = MyRequests.post('api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
         Assertions.assert_code_status(resp1, 400)
@@ -92,7 +92,7 @@ class TestUserReg(BaseCase):
             'lastName': 'lname',
             'email': 'name@example.com'
         }
-        resp1 = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        resp1 = MyRequests.post('api/user/', data=data)
         #print(resp1.status_code)
         #print(resp1.content)
         Assertions.assert_code_status(resp1, 400)
