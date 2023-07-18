@@ -10,7 +10,7 @@ class TestUserEdit(BaseCase):
         #register
         register_data= self.prepare_reg_data()
         #resp1=requests.post("https://playground.learnqa.ru/api/user/", data=register_data)
-        resp1=MyRequests.post("api/user/", data=register_data)
+        resp1=MyRequests.post("/user/", data=register_data)
         Assertions.assert_code_status(resp1, 200)
         Assertions.assert_json_has_key(resp1,"id")
         password = register_data['password']
@@ -23,21 +23,21 @@ class TestUserEdit(BaseCase):
             'password':password
         }
         #resp2=requests.post("https://playground.learnqa.ru/api/user/login", data=login_data)
-        resp2=MyRequests.post("api/user/login", data=login_data)
+        resp2=MyRequests.post("/user/login", data=login_data)
         auth_sid = self.get_cookie(resp2, "auth_sid")
         token = self.get_header(resp2, "x-csrf-token")
 
         #edit
         new_name="Changed Name"
 
-        resp3 =MyRequests.put(f"api/user/{user_id}",
+        resp3 =MyRequests.put(f"/user/{user_id}",
                             headers={"x-csrf-token": token},
                             cookies={"auth_sid": auth_sid},
                             data={"firstName":new_name})
         Assertions.assert_code_status(resp3, 200)
 
         #get
-        resp4=MyRequests.get(f"api/user/{user_id}",
+        resp4=MyRequests.get(f"/user/{user_id}",
                             headers={"x-csrf-token": token},
                             cookies={"auth_sid": auth_sid})
         #Assertions.assert_code_status(resp4,200)

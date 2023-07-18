@@ -13,7 +13,7 @@ class TestUserAuth(BaseCase):
 
     def setup_method(self):
         data = {'email': 'vinkotov@example.com', 'password': '1234'}
-        resp1 =MyRequests.post("api/user/login", data=data)
+        resp1 =MyRequests.post("/user/login", data=data)
 
         self.auth_sid = self.get_cookie(resp1,"auth_sid")
         self.token = self.get_header(resp1,"x-csrf-token")
@@ -21,7 +21,7 @@ class TestUserAuth(BaseCase):
 
     @allure.description("This test successfully authorize user by email and password")
     def test_auth_user(self):
-        resp2 =MyRequests.get("api/user/auth",
+        resp2 =MyRequests.get("/user/auth",
                            headers={"x-csrf-token":self.token},
                            cookies={"auth_sid":self.auth_sid})
 
@@ -35,7 +35,7 @@ class TestUserAuth(BaseCase):
     @allure.description("This test checks authorization status w/o sending auth cookie or token")
     @pytest.mark.parametrize("condition",exl_param)
     def test_negative_auth_check(self, condition):
-        url2 = 'api/user/auth'
+        url2 = '/user/auth'
         if condition=="no_cookie":
             resp2 = MyRequests.get(url2,
                                  headers={"x-csrf-token": self.token})
